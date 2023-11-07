@@ -6,7 +6,7 @@ import requests
 def get_station_facilities(station_name):
     conn = psycopg2.connect(
         host="51.145.236.173",
-        database="Stationszuil",
+        database="stationszuil",
         user="postgres",
         password="W@leed123"
     )
@@ -22,7 +22,7 @@ def open_berichten_venster():
     geselecteerd_station = station_keuze.get()
     station_kiezen_venster.destroy()
 
-    faciliteiten,berichten = get_station_facilities(geselecteerd_station)
+    faciliteiten = get_station_facilities(geselecteerd_station)
 
     '''
     Maak een nieuw venster aan voor het weergeven van berichten met betrekking tot het geselecteerde station.
@@ -63,7 +63,7 @@ def open_berichten_venster():
     '''
     conn = psycopg2.connect(
         host="51.145.236.173",
-        database="Stationszuil module 2",
+        database="stationszuil",
         user="postgres",
         password="W@leed123"
     )
@@ -73,7 +73,7 @@ def open_berichten_venster():
     '''
     Voer een query uit op de database om de meest recente berichten op te halen die goeggekeurd zijn door de NS moderators
     '''
-    query = f"SELECT datum_en_tijd, bericht_tekst, naam_reiziger FROM bericht WHERE station = '{geselecteerd_station}' AND goedgekeurd = 'true' ORDER BY datum_en_tijd DESC LIMIT 5"
+    query = f"SELECT datum_en_tijd, bericht_tekst, naam_reiziger FROM bericht WHERE goedgekeurd = 'true' ORDER BY datum_en_tijd DESC LIMIT 5"
     cursor.execute(query)
     berichten = cursor.fetchall()
 
@@ -127,6 +127,7 @@ def open_berichten_venster():
     faciliteiten_label.pack()
 
     if faciliteiten[0]:
+        global img_fiets
         img_fiets = tk.PhotoImage(file="img_ovfiets.png")
         img_fiets = img_fiets.subsample(3, 3)
         fiets_label = tk.Label(faciliteiten_frame, image=img_fiets, bg="#ffcf36")
@@ -134,6 +135,7 @@ def open_berichten_venster():
         fiets_label.pack(side="left", padx=5)
 
     if faciliteiten[2]:
+        global img_toilet
         img_toilet = tk.PhotoImage(file="img_toilet.png")
         img_toilet = img_toilet.subsample(3, 3)
         toilet_label = tk.Label(faciliteiten_frame, image=img_toilet, bg="#ffcf36")
@@ -141,6 +143,7 @@ def open_berichten_venster():
         toilet_label.pack(side="left", padx=5)
 
     if faciliteiten[3]:
+        global img_pr
         img_pr = tk.PhotoImage(file="img_pr.png")
         img_pr = img_pr.subsample(3, 3)
         pr_label = tk.Label(faciliteiten_frame, image=img_pr, bg="#ffcf36")
@@ -148,6 +151,7 @@ def open_berichten_venster():
         pr_label.pack(side="left", padx=5)
 
     if len(faciliteiten) > 4 and faciliteiten[4]:
+        global img_lift
         img_lift = tk.PhotoImage(file="img_lift.png")
         img_lift = img_lift.subsample(3, 3)
         lift_label = tk.Label(faciliteiten_frame, image=img_lift, bg="#ffcf36")
@@ -158,14 +162,10 @@ def open_berichten_venster():
 
 
 def get_weerbericht(stad):
-    base_url = "https://home.openweathermap.org/"
+
     api_key = "e8986097586d00553665b3f82ef1e38f"
-    params = {
-        "q": stad,
-        "appid": api_key,
-        "units": "metric"
-    }
-    response = requests.get(base_url, params=params)
+    base_url = f'https://api.openweathermap.org/data/2.5/weather?q={stad},nl&APPID={api_key}'
+    response = requests.get(base_url)
     data = response.json()
 
     if response.status_code == 200:

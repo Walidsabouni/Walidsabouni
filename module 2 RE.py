@@ -42,16 +42,16 @@ def main():
 
 def add_to_database(bericht, datum, naam, station, goedgekeurd, beoordelaar_naam, beoordelaar_email):
     connection = psycopg2.connect(
-        dbname="Stationszuil module 2",
+        dbname="stationszuil",
         user="postgres",
         password="W@leed123",
-        host="localhost"
+        host="51.145.236.173"
     )
     cursor = connection.cursor()
 
     try:
         cursor.execute(
-            "INSERT INTO Bericht (bericht_tekst, datum_en_tijd, naam_reiziger, station, goedgekeurd, naam_moderator, \"Emailadres_moderator\", tijd_en_datum_beoordeling) "
+            "INSERT INTO bericht (bericht_tekst, datum_en_tijd, naam_reiziger, station, goedgekeurd, naam_moderator, \"Emailadres_moderator\", tijd_en_datum_beoordeling) "
             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
             (bericht, datum, naam, station, goedgekeurd, beoordelaar_naam, beoordelaar_email, datetime.now())
         )
